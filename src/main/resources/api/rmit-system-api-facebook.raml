@@ -1,0 +1,57 @@
+#%RAML 1.0
+baseUri: https://mocksvc.mulesoft.com/mocks/ffa98b30-15ba-4c37-8d67-cf63cbba36da # baseUri: https://mocksvc.mulesoft.com/mocks/a1b1a858-5d39-4486-a7e1-f95665da9076 
+version: v1
+title: rmit-system-api-facebook
+description:  
+resourceTypes: 
+  getResource: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.0/resource_types/getItem.raml
+  collection: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.0/resource_types/collection.raml
+
+traits: 
+  client-id-required: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.0/traits/client-id-auth.raml
+  ordered: !include traits/ordered.raml
+  hasError: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.0/hasError.raml
+  hasReponseItem: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.0/traits/hasReponseItem.raml
+  hasResponseCollection: !include exchange_modules/bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops/raml-reusable-assets/1.0.0/traits/hasResponseCollection.raml
+
+/status:
+ type: getResource
+ get:  
+   is: [
+        hasReponseItem: {
+          exampleResponseItem: !include examples/get_status_response.json
+          }
+        ]
+
+/{group_id}:
+ is: [
+      client-id-required,
+      hasError
+    ]
+ /feed:
+   get:
+    queryParameters: 
+        fields: 
+          displayName: fields
+          type: string
+          description: List of fields to be retrieved, 
+          example: attachments,comments,likes
+          required: false
+        limit:
+          displayName: limit
+          type: integer
+          description: Limit number of items to be retrieved
+          example: 4
+          maximum: 100
+          required: false  
+    is: [
+            client-id-required,
+            hasResponseCollection: 
+            {
+              exampleResponseCollection: !include examples/get_feeds_response.json
+            },
+            hasError,
+            ordered
+          ]
+      
+        

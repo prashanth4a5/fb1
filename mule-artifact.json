@@ -1,0 +1,58 @@
+{
+  "configs": [
+    "rmit-facebook-feed.xml",
+    "exception-handler.xml",
+    "global-elements.xml",
+    "rmit-system-api-facebook.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "rmit-system-api-facebook",
+  "minMuleVersion": "4.1.1",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedResources": [
+        "api\\.gitignore",
+        "api\\examples\\get_feeds_response.json",
+        "api\\examples\\get_status_response.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\400.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\401.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\403.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\404.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\405.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\406.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\407.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\408.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\415.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\500.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\examples\\503.json",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\hasError.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\resource_types\\collection.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\resource_types\\createAnItem.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\resource_types\\getItem.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\resource_types\\itemById.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\traits\\cacheable.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\traits\\client-id-auth.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\traits\\hasError.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\traits\\hasReponseItem.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\traits\\hasRequestItem.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\traits\\hasResponseCollection.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\traits\\paginated.raml",
+        "api\\exchange_modules\\bc6addc5-6bfb-4ea8-8880-ed027c5cae7a.uniops\\raml-reusable-assets\\1.0.0\\types\\Error.raml",
+        "api\\rmit-system-api-facebook.raml",
+        "api\\traits\\ordered.raml",
+        "api\\traits\\pagination.raml",
+        "api\\types\\attachment.raml",
+        "api\\types\\attachments.raml",
+        "api\\types\\feed.raml",
+        "api\\types\\feeds.raml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

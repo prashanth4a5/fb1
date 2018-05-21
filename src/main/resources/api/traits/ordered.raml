@@ -1,0 +1,10 @@
+#%RAML 1.0 Trait
+queryParameters:
+  ordered:
+    description: Offset the list of returned results by this amount.
+      chronological - orders results with the oldest created objects first.
+      reverse_chronological - orders results with the newest created objects first.
+    type: string
+    enum: ["", chronological, reverse_chronological]
+    default: ""
+    required: false

@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd  http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+    <http:listener-config name="rmit-system-api-facebook-httpListenerConfig" doc:name="HTTP Listener config">
+        <http:listener-connection host="0.0.0.0" port="${secure::http.private.port}" />
+    </http:listener-config>
+    <apikit:config name="rmit-system-api-facebook-config" raml="rmit-system-api-facebook.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" doc:name="Router" />
+	<flow name="rmit-system-api-facebook-main">
+        <http:listener config-ref="rmit-system-api-facebook-httpListenerConfig" path="/api/*" doc:name="Listener">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <set-variable value='#[now() as LocalDateTime as String replace "-" with "" replace ":" with "" replace "." with "" ]' doc:name="Set transactionId" doc:id="173268c0-e2fe-4863-93dd-b7b7d2054b00" variableName="transactionID" />
+        <apikit:router config-ref="rmit-system-api-facebook-config" doc:name="APIkit Router" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST" doc:name="On Error Propagate" enableNotifications="true" logException="true">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="cf11ac8e-4fb8-450b-856b-e84d725a8121">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id" : "ID-" ++ p('secure::mule.env') ++ "-" ++ vars.transactionId,
+	"result" : "ERROR",
+	"code" : "400",
+	"application" : p('secure::mule.application'),
+	"provider" : p('secure::provider'),
+	"payload" : p('secure::400.message') ++ " : " ++ p('secure::400.description') ++ ":" ++ error.description
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND" doc:name="On Error Propagate" enableNotifications="true" logException="true">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="5fb98a3b-39f1-45d8-9ac8-33b78b6262c3">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id" : "ID-" ++ p('secure::mule.env') ++ "-" ++ vars.transactionID,
+	"result" : "ERROR",
+	"code" : "404",
+	"application" : p('secure::mule.application'),
+	"provider" : p('secure::provider'),
+	"payload" : p('secure::404.message') ++ " : " ++ p('secure::404.description') ++ ":" ++ error.description
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="95a33271-b0d4-44c5-82bd-24744f863361">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id" : "ID-" ++ p('secure::mule.env') ++ "-" ++ vars.transactionID,
+	"result" : "ERROR",
+	"code" : "405",
+	"application" : p('secure::mule.application'),
+	"provider" : p('secure::provider'),
+	"payload" : p('secure::405.message') ++ " : " ++ p('secure::405.description') ++ ":" ++ error.description
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[405]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="59626e8a-9610-4135-b1e6-00160af07d2a">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id" : "ID-" ++ p('secure::mule.env') ++ "-" ++ vars.transactionID,
+	"result" : "ERROR",
+	"code" : "406",
+	"application" : p('secure::mule.application'),
+	"provider" : p('secure::provider'),
+	"payload" : p('secure::406.message') ++ " : " ++ p('secure::406.description') ++ ":" ++ error.description
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[406]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="11ecca59-ef46-4e49-8eca-0d11ee9a921f">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id" : "ID-" ++ p('secure::mule.env') ++ "-" ++ vars.transactionID,
+	"result" : "ERROR",
+	"code" : "415",
+	"application" : p('secure::mule.application'),
+	"provider" : p('secure::provider'),
+	"payload" : p('secure::415.message') ++ " : " ++ p('secure::415.description') ++ ":" ++ error.description
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[415]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED" doc:name="On Error Propagate" enableNotifications="true" logException="true">
+                <ee:transform xsi:schemaLocation="http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="6f478e55-cf3f-40b7-bb1e-a302a135f819">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id" : "ID-" ++ p('secure::mule.env') ++ "-" ++ vars.transactionID,
+	"result" : "ERROR",
+	"code" : "500",
+	"application" : p('secure::mule.application'),
+	"provider" : p('secure::provider'),
+	"payload" : error.description
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[501]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="rmit-system-api-facebook-console">
+        <http:listener config-ref="rmit-system-api-facebook-httpListenerConfig" path="/console/*" doc:name="Listener">
+            <http:response statusCode="#[vars.httpStatus default 200]" />
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="rmit-system-api-facebook-config" doc:name="APIkit Console" />
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND" doc:name="On Error Propagate" enableNotifications="true" logException="true">
+                <ee:transform xsi:schemaLocation=" http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd" doc:id="cb1d2ebf-8447-4c0b-b84c-a64bd6fa2639">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"id" : "ID-" ++ p('secure::mule.env') ++ "-" ++ vars.transactionID,
+	"result" : "ERROR",
+	"code" : "404",
+	"application" : p('secure::application'),
+	"provider" : p('secure::provider'),
+	"payload" : p('secure::404.message') ++ " : " ++ p('secure::404.description') ++ ":" ++ error.description
+}]]></ee:set-payload>
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus"><![CDATA[404]]></ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\status:rmit-system-api-facebook-config">
+        <ee:transform doc:name="Transform Message" doc:id="b83f26b2-4464-491d-86e8-f61da8a9fe08">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"title": p('secure::mule.application'), 
+	"version":"v1", 
+	"requestTime": now()  as DateTime {format: "yyyy-MM-dd HH:mm:ss.SSSSs"}
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="get:\(group_id)\feed:rmit-system-api-facebook-config">
+		<flow-ref doc:name="rmit-facebook-feedFlow" doc:id="6a63cf9d-c2ef-4b2b-99da-ff697ff29d0c" name="rmit-facebook-feedFlow"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7003b762-8dfa-4509-a08f-e7cc45345ee6" >
+				<ee:transform doc:name="Transform Message" doc:id="2e3ae2e5-1e69-43e2-bce8-05473eaf7574" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+    </flow>
+</mule>

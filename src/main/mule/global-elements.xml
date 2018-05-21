@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties"
+xmlns="http://www.mulesoft.org/schema/mule/core"
+xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway" 
+xmlns:http="http://www.mulesoft.org/schema/mule/http"
+xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd 
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd">
+	
+	<http:request-config name="facebook-feed-api-config" doc:name="HTTP Request configuration" doc:id="9bc7abd6-0b62-48f1-9aed-e29bdcad3ca2" >
+		<http:request-connection protocol="HTTPS" host="${secure::facebook.feed.host}" port="443"/>
+	</http:request-config>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="b785c29a-ace4-4fa5-af27-744bd72c00b6" file="mule-app.properties" key="12345" >
+		<secure-properties:encrypt algorithm="Blowfish" mode="CBC"/>
+	</secure-properties:config>
+	<secure-properties:config name="Secure_Properties_Config1" doc:name="Secure Properties Config" doc:id="eb360c21-31e0-4d7f-8212-038995b46361" file="mule-dev.properties" key="12345" >
+		<secure-properties:encrypt algorithm="Blowfish" mode="CBC"/>
+	</secure-properties:config>
+	<secure-properties:config name="Secure_Properties_Config_ErrorCode" doc:name="Secure Properties Config" doc:id="b785c29a-ace4-4fa5-af27-744bd72c00b6" file="mule-errors.properties" key="12345" >
+		<secure-properties:encrypt algorithm="Blowfish" mode="CBC"/>
+	</secure-properties:config>
+	
+
+</mule>
